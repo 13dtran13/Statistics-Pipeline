@@ -1,16 +1,10 @@
 import argparse
-from pandas import DataFrame
 import numpy 
 import os
-import re
-#from ggplot import *
 from collections import defaultdict
-import collections
-# import matplotlib.pyplot as plt
-from itertools import cycle
-# import plot_data as plotter
-# import parser_for_data as data_parser
 import subprocess
+
+#python parser_for_config.py ~/Documents/Research/Schroeder\ Research/Statistics-Pipeline/data/phenodata.txt
 
 # Parse the input values of the command line
 parser = argparse.ArgumentParser(description='Open the config file')
@@ -32,92 +26,52 @@ def addToDataMatrix(MAIN_config):
 	#Cluster all the input files based on a key
 	#The key from the config file is plantid-cond1-cond2-CO2
 	for row in MAIN_config:
-		print row[0]
+
 		#Skip header and skip any file that has a load set to false
 		if (row[8].lower() == "false" or row[0] == "plantid" or row[0] == ""):
 			continue; 
-		else:
-			
-			# temp array to insert into data_Matrix
-			array_to_insert_into_matrix = []
+		
+		# Rename strings from row array, and time_string_array requires a check to see if it is empty
+		plantid, cond1, cond2, CO2_string, folder_and_file, instrument = row[0], row[1], row[2], row[3], row[5] + "/" + row[6], row[7]
+		time_string_array = []
+		if (row[4] != "" ):
+			time_string_array = row[4].split(';')
+		else: 
+			time_string_array = {0}
+		
+		# Insert into 0 index and make a temp array for management
+		array_to_insert_into_matrix = [folder_and_file]
+		
+		#Get the colums on data for cond1, cond2 and CO2R and insert into temp_array
+		array_to_insert_into_matrix.append( ExtractOneCondtion(folder_and_file, cond1, instrument) )
+		array_to_insert_into_matrix.append( ExtractOneCondtion(folder_and_file, cond2, instrument) )
+		array_to_insert_into_matrix.append( ExtractOneCondtion(folder_and_file, "CO2R", instrument) )
 
-			# Concatenate the folder and the file together  
-			folder_and_file = row[5] + "/" + row[6]
-			
-			# Insert into 0 index
-			array_to_insert_into_matrix.append(folder_and_file) 
+		#Insert plantid
+		array_to_insert_into_matrix.append(plantid)
 
-			# Rename strings from row array
-			plantid = row[0]
-			cond1 = row[1]
-			cond2 = row[2]
-			CO2_string_array = row[3].split(';')
-			if (row[4] != "" ):
-				time_string_array = row[4].split(';')
-			else: 
-				time_string_array = {0}
-			instrument = row[7]
+		#Get the int arrays of CO2 and Time values both deliminated with semi collections			
+		#Remove any quotations and cast CO2 values to ints
+		CO2_int = split_CO2_String_Array(CO2_string)
+		array_to_insert_into_matrix.append(CO2_int)
 
-			#Get the colums on data for cond1, cond2 and CO2R and insert into temp_array
-			array_to_insert_into_matrix.append( ExtractOneCondtion(folder_and_file, cond1, instrument) )
-			array_to_insert_into_matrix.append( ExtractOneCondtion(folder_and_file, cond2, instrument) )
-			array_to_insert_into_matrix.append( ExtractOneCondtion(folder_and_file, "CO2R", instrument) )
-
-			#Insert plantid
-			array_to_insert_into_matrix.append(plantid)
-
-			#Get the int arrays of CO2 and Time values both deliminated with semi collections			
-			#Remove any quotations and cast CO2 values to ints
-			CO2_int = []
-			for value in CO2_string_array:
-				value = value.replace('"',"")
-				value = value.replace("'","")
-				CO2_int.append( int(value) )
-			array_to_insert_into_matrix.append(CO2_int)
-
-			time_int = []
-			if (time_string_array[0] == 0 or time_string_array[0] == "" or time_string_array[0] == "none"):
-				time_int.append( -1 )
-			else : 
-				for value in time_string_array:
-					value = value.replace('"',"")
-					value = value.replace("'","")
-					time_int.append( int(value) )
-			array_to_insert_into_matrix.append(time_int)
-			#Insert condition strings
-			array_to_insert_into_matrix.append(cond1)
-			array_to_insert_into_matrix.append(cond2)
-			data_Matrix.append(array_to_insert_into_matrix)
+		time_int = []
+		if (time_string_array[0] == 0 or time_string_array[0] == "" or time_string_array[0] == "none"):
+			time_int.append( -1 )
+		else: 
+			for value in time_string_array:
+				value = time_int.append( int(  value.replace('"',"").replace("'","")  ) )
+		array_to_insert_into_matrix.append(time_int)
+		
+		#Insert condition strings
+		array_to_insert_into_matrix.append(cond1)
+		array_to_insert_into_matrix.append(cond2)
+		data_Matrix.append(array_to_insert_into_matrix)
+		if (instrument == "6400"):
 			array_to_insert_into_matrix.append( ExtractOneCondtion(folder_and_file, "Time", instrument) )
-
+		if (instrument == "6400XT"):
+			array_to_insert_into_matrix.append( ExtractOneCondtion(folder_and_file, "FTime", instrument) )
 	return data_Matrix
-
-'''
-Takes in Main_config and clusters all files in config based on plantid-cond1-cond2-CO2
-and returns a dictionary where keys are the plantid-cond1-cond2-CO2 and values are
-all values in that cluster	
-'''
-def ClusterConfigFiles(MAIN_config):
-	#Create a dictionary to cluster files according
-	cluster_files = defaultdict(list)
-
-	#Cluster all the input files based on a key
-	#The key from the config file is plantid-cond1-cond2-CO2
-	for row in MAIN_config:
-		#Skip header and skip any file that has a load set to false
-		if (row[8].lower() == "false" or row[0] == "plantid" or row[0] == ""):
-			continue; 
-		else:
-			#Concatenate the plantid,cond1,cond2,CO2 to make a unique key
-			key = str(row[0]) + "-" + str(row[1]) + "-" + str(row[2]) + "-" + str(row[3])
-
-			#Concatenate the folder and the file together 
-			value = row[5] + "/" + row[6]
-
-			#Add the key to the dictionary and all the files associated with it
-			cluster_files[key].append(value)
-
-	return cluster_files
 
 '''
 Helper method to extract one specific column from one specific file 
@@ -132,24 +86,82 @@ def ExtractOneCondtion( folder_and_file, cond, instrument ):
 	#Append the path to the file in order to open file
 	abs_path_file = path[:-num]+folder_and_file
 
-	#if the instrument is 6400 and the current file being examined comes from 6400
-	if (instrument == "6400"):
+	#if the instrument was 6400Xt and the current file is from 6400XT
+	if (instrument == "6400XT"):
 
-		#Create an ndarray of the current file knowing the file is a 6400 file
-		current_file_ndarray = numpy.loadtxt(abs_path_file,dtype=str,delimiter=',',skiprows=11)
-
-		#Get the column titles and separate into a list
-		array_col_name = (current_file_ndarray[0]).tolist()
+		#Iterate through file and get header
+		header_array = []
+		cond_array = []
+		with open(abs_path_file) as file:
+			for line in file:
+				if ( line[1:4] == "Obs" ):		
+					header_array = line.split("\t")
+				if ( line[0] != "<" and line[0] != '"' ):
+					cond_array.append(line.split("\t"))
+		cond_array.pop(0)
 		
 		#Get the column number associated with the provided input values
-		column_number = array_col_name.index('"'+str(cond)+'"')
+		column_number = header_array.index('"'+str(cond)+'"')
+		array_to_return = []	
+		
+		for subarray in cond_array:
+			rawData = subarray[column_number].rstrip()
+			array_to_return.append(rawData)
+		return array_to_return
 
-		cond_array = numpy.loadtxt(abs_path_file,dtype=str,delimiter=',',skiprows=12,usecols=(column_number,))
+	#if the instrument was 6400 and the current file is from 6400XT
+	if (instrument == "6400"):
+
+		#Get the column titles (strings) and get the line to skip to
+		array_col_name = []
+		lineToStartOn = 0
+		with open(abs_path_file) as infile:
+			for line in infile:
+				if (line[1:4] == "Obs"):
+					array_col_name = line.split(',')
+					break
+				lineToStartOn = lineToStartOn + 1
+
+		#Get the column number associated with the provided input values
+		column_number = array_col_name.index('"'+str(cond)+'"')
+		
+		cond_array = numpy.loadtxt(abs_path_file,dtype=str,delimiter=',',skiprows=lineToStartOn+1,usecols=(column_number,))
 		return cond_array
 
-	#if the instrument was 6400Xt and the current file is from 6400XT
-	if (row[6] == "6400XT" and datafile == row[5] + "/" + row[6]):
-		print "Testing"
+
+	# #if the instrument is 6400 and the current file being examined comes from 6400
+	# if (instrument == "6400"):
+	# 	cond_array = numpy.loadtxt(abs_path_file,dtype=str,delimiter=',',skiprows=lineToStartOn+1,usecols=(column_number,))
+	# 	return cond_array
+
+	# #if the instrument was 6400Xt and the current file is from 6400XT
+	# if (row[6] == "6400XT" and datafile == row[5] + "/" + row[6]):
+	# 	cond_array = numpy.loadtxt(abs_path_file,dtype=str,delimiter=',',skiprows=lineToStartOn+1,usecols=(column_number,))
+	# 	print cond_array
+'''
+Takes in Main_config and clusters all files in config based on plantid-cond1-cond2-CO2
+and returns a dictionary where keys are the plantid-cond1-cond2-CO2 and values are
+all values in that cluster	
+'''
+def ClusterConfigFiles(MAIN_config):
+	
+	#Create a dictionary to cluster files according
+	cluster_files = defaultdict(list)
+
+	#Cluster all the input files based on a key
+	#The key from the config file is plantid-cond1-cond2-CO2
+	for row in MAIN_config:
+		#Skip header and skip any file that has a load set to false
+		if (row[8].lower() == "false" or row[0] == "plantid" or row[0] == ""):
+			continue; 
+		else:
+			#Concatenate the plantid,cond1,cond2,CO2 to make a unique key
+			key = str(row[0]) + "-" + str(row[1]) + "-" + str(row[2]) + "-" + str(row[3])
+			#Concatenate the folder and the file together 
+			value = row[5] + "/" + row[6]
+			#Add the key to the dictionary and all the files associated with it
+			cluster_files[key].append(value)
+	return cluster_files
 
 '''
 Given a string that has CO2 levels separated by semi-colons, return an array of the CO2 ints
@@ -159,9 +171,7 @@ def split_CO2_String_Array(CO2_string):
 	CO2_string_array = CO2_string.split(";")
 	#Remove excess quotes
 	for value in CO2_string_array:
-		value = value.replace('"',"") 
-		value = value.replace("'","")
-		CO2_int.append( int(value) )
+		CO2_int.append( int(  value.replace('"',"").replace("'","")  )  )
 	return CO2_int
 
 '''
@@ -190,8 +200,7 @@ def findNearestTimeIndex( value, array ):
 Split cond array using CO2 values and returns array of indexes that are each separate point
 '''
 def splitArray( CO2R_array, levels_CO2_array):
-	return_index_array = []
-	return_index_array.append(0)
+	return_index_array = [0]
 
 	temp_index = 5; 
 	# loop through each CO2 argument
@@ -204,6 +213,12 @@ def splitArray( CO2R_array, levels_CO2_array):
 				temp_index = i + 5
 				break
 	return return_index_array
+'''
+Call a shell command while in script
+'''
+def callShellCommand(input):
+	subprocess.Popen(input,shell = True).wait()
+
 '''
 Print the entire data matrix in a text art version
 '''
@@ -245,7 +260,7 @@ def main():
 	#Cluster all files accordingly
 	cluster_files = ClusterConfigFiles(MAIN_config)
 
-	#toString(data_Matrix)
+	toString(data_Matrix)
 
 	# loop through each clustering and get the common id 
 	# and the series of files 
@@ -296,7 +311,7 @@ def main():
 			# print
 			# print"------------------------"
 			# print file
-			# print stored_indexes
+			print stored_indexes
 		# file_count = len(value) + 1
 		# counter = 1
 		# #Create a figure for this clustering that will hold everything
