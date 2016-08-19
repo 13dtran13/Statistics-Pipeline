@@ -7,9 +7,6 @@ import subprocess
 import math
 import plot_tools as plotter
 import exp_Fitting as exp
-# cd /Users/13dtran13/Documents/Research/"Schroeder Research"/Statistics-Pipeline/github/Statistics-Pipeline
-# source activate Statistical-Pipeline-Conda
-# python parser_for_config.py ~/Documents/Research/Schroeder\ Research/Statistics-Pipeline/data/phenodata.txt
 
 # Parse the input values of the command line
 parser = argparse.ArgumentParser(description='Open the config file')
@@ -482,8 +479,9 @@ def main():
 	abs_path_file = path[:-num]
 
 	#Save the entire textfile as a numpy ndarray
+	#Sorry due to legacy code, the config file is a tab delimited txt file (not a tsv, but txt)
 	MAIN_config = numpy.loadtxt(args.filename,dtype=str,delimiter='\t',skiprows=0)
-	# MAIN_config = numpy.loadtxt(args.filename,dtype=str,delimiter='\t',skiprows=0 , usecols = (1,4,5))
+
 	#Load all necessary columns into the data_matrix for each file
 	data_Matrix, legend_heading = addToDataMatrix(MAIN_config)
 
