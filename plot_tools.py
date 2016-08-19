@@ -382,270 +382,270 @@ def loess(data_Matrix,legend_headings):
 			pdf.savefig()
 			plt.close()
 
-# def histogram(plotTable,folder_files, legend_headings):
+def histogram(plotTable,folder_files, legend_headings):
 
-# 	fileNamesOnly = []
-# 	for string in legend_headings:
-# 		fileNamesOnly.append( string.split(" : ")[1] )
+	fileNamesOnly = []
+	for string in legend_headings:
+		fileNamesOnly.append( string.split(" : ")[1] )
 
-# 	#Initalize empty arrays
-# 	baselines, plantids, slopes, x_axis, Taus, CriticalPoints, conductance = [], [], [], [], [], [], []
+	#Initalize empty arrays
+	baselines, plantids, slopes, x_axis, Taus, CriticalPoints, conductance = [], [], [], [], [], [], []
 
-# 	#Extract data from plotTable and palce in appropriate arrays
-# 	for index in range ( len(plotTable) ):
-# 		plantids.append(plotTable[index][0])
-# 		baselines.append(plotTable[index][1])
-# 		slopes.append(plotTable[index][2])
-# 		x_axis.append(index+1)
-# 		Taus.append(plotTable[index][4])
-# 		CriticalPoints.append(plotTable[index][5])
-# 		conductance.append(plotTable[index][6])
+	#Extract data from plotTable and palce in appropriate arrays
+	for index in range ( len(plotTable) ):
+		plantids.append(plotTable[index][0])
+		baselines.append(plotTable[index][1])
+		slopes.append(plotTable[index][2])
+		x_axis.append(index+1)
+		Taus.append(plotTable[index][4])
+		CriticalPoints.append(plotTable[index][5])
+		conductance.append(plotTable[index][6])
 
 
 
 	
-# 	with PdfPages('SummaryGraphs.pdf') as pdf:
+	with PdfPages('SummaryGraphs.pdf') as pdf:
 
-# 		###########################
-# 		#Create a box plot for summary statistics 
-# 		fig = plt.figure()
-# 		ax = fig.add_subplot(111)
-# 		ax.set_ylabel('Conduction',color='black', fontsize=14)
-# 		ax.set_xlabel('File Names',color='black', fontsize=14)
-# 		ax.tick_params(labelsize=14)
-# 		plt.title('Box Plots of Conductance',y=1.08,fontsize=16)
-# 		fig.set_size_inches(14.5, 10.5)
+		###########################
+		#Create a box plot for summary statistics 
+		fig = plt.figure()
+		ax = fig.add_subplot(111)
+		ax.set_ylabel('Conduction',color='black', fontsize=14)
+		ax.set_xlabel('File Names',color='black', fontsize=14)
+		ax.tick_params(labelsize=14)
+		plt.title('Box Plots of Conductance',y=1.08,fontsize=16)
+		fig.set_size_inches(14.5, 10.5)
 
-# 		#Create Box Plot
-# 		ax.boxplot(conductance)
+		#Create Box Plot
+		ax.boxplot(conductance)
 
-# 		xtickNames = ax.set_xticklabels(fileNamesOnly)
-# 		plt.setp(xtickNames, rotation=75, fontsize=12)
+		xtickNames = ax.set_xticklabels(fileNamesOnly)
+		plt.setp(xtickNames, rotation=75, fontsize=12)
 		
-# 		plt.tight_layout()
-# 		pdf.savefig()
-# 		plt.close()
-# 		###########################
+		plt.tight_layout()
+		pdf.savefig()
+		plt.close()
+		###########################
 
-# 		#Create a bar plot of the mean of the baseline conductance
-# 		fig = plt.figure()
-# 		ax = fig.add_subplot(111)
-# 		fig.set_size_inches(14.5, 10.5)
-# 		ax.tick_params(labelsize=12)
-# 		bars = []
-# 		colors = cycle(["aqua", "black", "blue", "fuchsia", "gray", "green", "lime", "maroon", "navy", "olive", "purple", "red", "silver", "teal", "yellow"])
+		#Create a bar plot of the mean of the baseline conductance
+		fig = plt.figure()
+		ax = fig.add_subplot(111)
+		fig.set_size_inches(14.5, 10.5)
+		ax.tick_params(labelsize=12)
+		bars = []
+		colors = cycle(["aqua", "black", "blue", "fuchsia", "gray", "green", "lime", "maroon", "navy", "olive", "purple", "red", "silver", "teal", "yellow"])
 		
-# 		#create first bar graph of the baselines
-# 		for i in range ( len(x_axis) ):
-# 			rects = ax.bar(x_axis[i], baselines[i], 0.35, color=next(colors))
-# 			bars.append( rects )
+		#create first bar graph of the baselines
+		for i in range ( len(x_axis) ):
+			rects = ax.bar(x_axis[i], baselines[i], 0.35, color=next(colors))
+			bars.append( rects )
 
-# 		#Set the range of x and add tick marks and tick labels
-# 		ax.set_xlim(-width,len(x_axis) + 1 + width)
-# 		ax.set_xticks(x_axis)
-# 		xtickNames = ax.set_xticklabels(plantids)
-# 		plt.setp(xtickNames, rotation=45, fontsize=14)
+		#Set the range of x and add tick marks and tick labels
+		ax.set_xlim(-width,len(x_axis) + 1 + width)
+		ax.set_xticks(x_axis)
+		xtickNames = ax.set_xticklabels(plantids)
+		plt.setp(xtickNames, rotation=45, fontsize=14)
 		
-# 		# Name the y and x axis, and title
-# 		ax.set_ylabel('Conduction',color='black',fontsize=14)
-# 		ax.set_xlabel('Plantid',color='black',fontsize=14)
-# 		plt.title('Mean of Baseline Conductance',y=1.08,fontsize=16)
+		# Name the y and x axis, and title
+		ax.set_ylabel('Conduction',color='black',fontsize=14)
+		ax.set_xlabel('Plantid',color='black',fontsize=14)
+		plt.title('Mean of Baseline Conductance',y=1.08,fontsize=16)
 		
-# 		#Create the legend for image and add to new pdf page
-# 		plt.subplots_adjust(left=left, bottom=bottom, right=right, top=top, wspace=wspace, hspace=hspace)
-# 		plt.legend((bars),(legend_headings),bbox_to_anchor=((0., 1.82, 1., .182)), loc=1, ncol=3, mode="expand", borderaxespad=0.,prop={'size':12},title="Files and Their Folder Name Plotted Below")
-# 		pdf.savefig()
-# 		plt.close()
+		#Create the legend for image and add to new pdf page
+		plt.subplots_adjust(left=left, bottom=bottom, right=right, top=top, wspace=wspace, hspace=hspace)
+		plt.legend((bars),(legend_headings),bbox_to_anchor=((0., 1.82, 1., .182)), loc=1, ncol=3, mode="expand", borderaxespad=0.,prop={'size':12},title="Files and Their Folder Name Plotted Below")
+		pdf.savefig()
+		plt.close()
 		
-# 		###########################
+		###########################
 		
-# 		#Create a bar plot of the slope of the baseline conductance
-# 		fig = plt.figure()
-# 		ax = fig.add_subplot(111)
-# 		fig.set_size_inches(14.5, 10.5)
-# 		ax.tick_params(labelsize=12)
-# 		bars1 = []
-# 		colors = cycle(["aqua", "black", "blue", "fuchsia", "gray", "green", "lime", "maroon", "navy", "olive", "purple", "red", "silver", "teal", "yellow"])
+		#Create a bar plot of the slope of the baseline conductance
+		fig = plt.figure()
+		ax = fig.add_subplot(111)
+		fig.set_size_inches(14.5, 10.5)
+		ax.tick_params(labelsize=12)
+		bars1 = []
+		colors = cycle(["aqua", "black", "blue", "fuchsia", "gray", "green", "lime", "maroon", "navy", "olive", "purple", "red", "silver", "teal", "yellow"])
 		
-# 		#Create bar graph in slopes
-# 		for i in range ( len(x_axis) ):
-# 			rects = ax.bar(x_axis[i], slopes[i], 0.35, color=next(colors))
-# 			bars1.append( rects )
+		#Create bar graph in slopes
+		for i in range ( len(x_axis) ):
+			rects = ax.bar(x_axis[i], slopes[i], 0.35, color=next(colors))
+			bars1.append( rects )
 		
-# 		#Set the range of x and add tick marks and tick labels
-# 		ax.set_xlim(-width,len(x_axis) + 1 + width)
-# 		ax.set_xticks(x_axis)
-# 		xtickNames = ax.set_xticklabels(plantids)
-# 		plt.setp(xtickNames, rotation=45, fontsize=14)
-# 		ax.set_ylabel('Conduction',color='black', fontsize=14)
-# 		ax.set_xlabel('Plantid',color='black', fontsize=14)
-# 		plt.title('Slope of Baseline Conductance',y=1.08,fontsize=16)
-# 		plt.axhline(0, color='black')
-# 		plt.subplots_adjust(left=left, bottom=bottom, right=right, top=top, wspace=wspace, hspace=hspace)
-# 		plt.legend((bars1),(legend_headings),bbox_to_anchor=((0., 1.82, 1., .182)), loc=1, ncol=3, mode="expand", borderaxespad=0.,prop={'size':12},title="Files and Their Folder Name Plotted Below")
-# 		pdf.savefig()
-# 		plt.close()
-# 		###########################
+		#Set the range of x and add tick marks and tick labels
+		ax.set_xlim(-width,len(x_axis) + 1 + width)
+		ax.set_xticks(x_axis)
+		xtickNames = ax.set_xticklabels(plantids)
+		plt.setp(xtickNames, rotation=45, fontsize=14)
+		ax.set_ylabel('Conduction',color='black', fontsize=14)
+		ax.set_xlabel('Plantid',color='black', fontsize=14)
+		plt.title('Slope of Baseline Conductance',y=1.08,fontsize=16)
+		plt.axhline(0, color='black')
+		plt.subplots_adjust(left=left, bottom=bottom, right=right, top=top, wspace=wspace, hspace=hspace)
+		plt.legend((bars1),(legend_headings),bbox_to_anchor=((0., 1.82, 1., .182)), loc=1, ncol=3, mode="expand", borderaxespad=0.,prop={'size':12},title="Files and Their Folder Name Plotted Below")
+		pdf.savefig()
+		plt.close()
+		###########################
 
-# 		#Compute Values for Exponential Growth and Decay 
-# 		GrowthTaus, GrowthInitial,GrowthAsympote = [], [] , []
-# 		DecayTaus, DecayInitial, DecayAsympote = [], [] , []
+		#Compute Values for Exponential Growth and Decay 
+		GrowthTaus, GrowthInitial,GrowthAsympote = [], [] , []
+		DecayTaus, DecayInitial, DecayAsympote = [], [] , []
 
-# 		#Loop through all the points (triplets)
-# 		for i in range (len(CriticalPoints) ):
-# 			triplet = map(float,CriticalPoints[i])
-# 			phase1Tupl = (triplet[0],triplet[1])
-# 			phase2Tupl = (triplet[1], triplet[2])
-# 			plantid = plantids[i]
+		#Loop through all the points (triplets)
+		for i in range (len(CriticalPoints) ):
+			triplet = map(float,CriticalPoints[i])
+			phase1Tupl = (triplet[0],triplet[1])
+			phase2Tupl = (triplet[1], triplet[2])
+			plantid = plantids[i]
 
-# 			#determine growth or decay came first in experiment	
-# 			#Growth
-# 			if phase1Tupl[0] < phase1Tupl[1]:
-# 				#Add Growth and Decay Order Respectively
-# 				GrowthTaus.append(Taus[i][0])
-# 				DecayTaus.append(Taus[i][1])
-# 				#Add growth from phase 1
-# 				GrowthInitial.append(phase1Tupl[0])
-# 				GrowthAsympote.append(phase1Tupl[1])
-# 				#Add decay from phase 2
-# 				DecayInitial.append(phase2Tupl[0])
-# 				DecayAsympote.append(phase2Tupl[1])
+			#determine growth or decay came first in experiment	
+			#Growth
+			if phase1Tupl[0] < phase1Tupl[1]:
+				#Add Growth and Decay Order Respectively
+				GrowthTaus.append(Taus[i][0])
+				DecayTaus.append(Taus[i][1])
+				#Add growth from phase 1
+				GrowthInitial.append(phase1Tupl[0])
+				GrowthAsympote.append(phase1Tupl[1])
+				#Add decay from phase 2
+				DecayInitial.append(phase2Tupl[0])
+				DecayAsympote.append(phase2Tupl[1])
 
-# 			#Decay
-# 			else:
-# 				#Add Growth and Decay Order Respectively
-# 				GrowthTaus.append(Taus[i][1])
-# 				DecayTaus.append(Taus[i][0])
-# 				#Add Decay from phase 1
-# 				DecayInitial.append(phase1Tupl[0])
-# 				DecayAsympote.append(phase1Tupl[1])
-# 				#Add Growth from phase 2
-# 				GrowthInitial.append(phase2Tupl[0])
-# 				GrowthAsympote.append(phase2Tupl[1])
+			#Decay
+			else:
+				#Add Growth and Decay Order Respectively
+				GrowthTaus.append(Taus[i][1])
+				DecayTaus.append(Taus[i][0])
+				#Add Decay from phase 1
+				DecayInitial.append(phase1Tupl[0])
+				DecayAsympote.append(phase1Tupl[1])
+				#Add Growth from phase 2
+				GrowthInitial.append(phase2Tupl[0])
+				GrowthAsympote.append(phase2Tupl[1])
 		
-# 		###########################
-# 		#Create Side by Side Plot for Tau Values
-# 		fig = plt.figure()
-# 		ax = fig.add_subplot(111)
-# 		fig.set_size_inches(14.5, 10.5)
-# 		ax.tick_params(labelsize=12)
-# 		colors = cycle(["blue",  "maroon"])
+		###########################
+		#Create Side by Side Plot for Tau Values
+		fig = plt.figure()
+		ax = fig.add_subplot(111)
+		fig.set_size_inches(14.5, 10.5)
+		ax.tick_params(labelsize=12)
+		colors = cycle(["blue",  "maroon"])
 
-# 		for i in range ( len(x_axis) ):
-# 			rects = ax.bar(x_axis[i], GrowthTaus[i], 0.35, color=next(colors))
-# 			rects1 = ax.bar(x_axis[i]+width, DecayTaus[i], 0.35, color=next(colors))
+		for i in range ( len(x_axis) ):
+			rects = ax.bar(x_axis[i], GrowthTaus[i], 0.35, color=next(colors))
+			rects1 = ax.bar(x_axis[i]+width, DecayTaus[i], 0.35, color=next(colors))
 
-# 		#Set the range of x and add tick marks and tick labels
-# 		ax.set_xlim(-width,len(x_axis) + 1 + width)
-# 		ax.set_xticks(x_axis)
-# 		xtickNames = ax.set_xticklabels(fileNamesOnly)
-# 		plt.setp(xtickNames, rotation=75, fontsize=14)
-# 		ax.set_ylabel('Tau Value',color='black',fontsize=14)
-# 		ax.set_xlabel('File',color='black',fontsize=14)
-# 		plt.title('Side by Side Plot Of Taus',fontsize=16)
+		#Set the range of x and add tick marks and tick labels
+		ax.set_xlim(-width,len(x_axis) + 1 + width)
+		ax.set_xticks(x_axis)
+		xtickNames = ax.set_xticklabels(fileNamesOnly)
+		plt.setp(xtickNames, rotation=75, fontsize=14)
+		ax.set_ylabel('Tau Value',color='black',fontsize=14)
+		ax.set_xlabel('File',color='black',fontsize=14)
+		plt.title('Side by Side Plot Of Taus',fontsize=16)
 
-# 		#Make the legend
-# 		blue_patch = mpatches.Patch(color='blue', label='Exponential Growth')
-# 		maroon_patch = mpatches.Patch(color='maroon', label='Exponential Decay')
-# 		plt.legend(handles=[blue_patch,maroon_patch])	
+		#Make the legend
+		blue_patch = mpatches.Patch(color='blue', label='Exponential Growth')
+		maroon_patch = mpatches.Patch(color='maroon', label='Exponential Decay')
+		plt.legend(handles=[blue_patch,maroon_patch])	
 
-# 		#Format and Save
-# 		plt.tight_layout()
-# 		pdf.savefig()
-# 		plt.close()
+		#Format and Save
+		plt.tight_layout()
+		pdf.savefig()
+		plt.close()
 
-# 		#######################
+		#######################
 		
-# 		#Create Side by Side Plot for Initial and Asympote values for Growth
-# 		fig = plt.figure()
-# 		ax = fig.add_subplot(111)
-# 		fig.set_size_inches(14.5, 10.5)
-# 		ax.tick_params(labelsize=12)
-# 		colors = cycle(["blue",  "maroon"])
-# 		for i in range ( len(x_axis) ):
-# 			rects = ax.bar(x_axis[i], GrowthInitial[i], 0.35, color=next(colors))
-# 			rects1 = ax.bar(x_axis[i]+width, GrowthAsympote[i], 0.35, color=next(colors))
+		#Create Side by Side Plot for Initial and Asympote values for Growth
+		fig = plt.figure()
+		ax = fig.add_subplot(111)
+		fig.set_size_inches(14.5, 10.5)
+		ax.tick_params(labelsize=12)
+		colors = cycle(["blue",  "maroon"])
+		for i in range ( len(x_axis) ):
+			rects = ax.bar(x_axis[i], GrowthInitial[i], 0.35, color=next(colors))
+			rects1 = ax.bar(x_axis[i]+width, GrowthAsympote[i], 0.35, color=next(colors))
 
-# 		#Set the range of x and add tick marks and tick labels
-# 		ax.set_xlim(-width,len(x_axis) + 1 + width)
-# 		ax.set_xticks(x_axis)
-# 		xtickNames = ax.set_xticklabels(fileNamesOnly)
-# 		plt.setp(xtickNames, rotation=75, fontsize=14)
-# 		ax.set_ylabel('Conductance Value',color='black',fontsize=14)
-# 		ax.set_xlabel('File',color='black',fontsize=14)
-# 		plt.title('Significant Exponential Growth Values Used to Calculate Tau',fontsize=16)
+		#Set the range of x and add tick marks and tick labels
+		ax.set_xlim(-width,len(x_axis) + 1 + width)
+		ax.set_xticks(x_axis)
+		xtickNames = ax.set_xticklabels(fileNamesOnly)
+		plt.setp(xtickNames, rotation=75, fontsize=14)
+		ax.set_ylabel('Conductance Value',color='black',fontsize=14)
+		ax.set_xlabel('File',color='black',fontsize=14)
+		plt.title('Significant Exponential Growth Values Used to Calculate Tau',fontsize=16)
 
-# 		#Make the legend
-# 		blue_patch = mpatches.Patch(color='blue', label='Initial Value')
-# 		maroon_patch = mpatches.Patch(color='maroon', label='Asymptote Value')
-# 		plt.legend(handles=[blue_patch,maroon_patch])	
+		#Make the legend
+		blue_patch = mpatches.Patch(color='blue', label='Initial Value')
+		maroon_patch = mpatches.Patch(color='maroon', label='Asymptote Value')
+		plt.legend(handles=[blue_patch,maroon_patch])	
 
-# 		#Format and save
-# 		plt.tight_layout()
-# 		pdf.savefig()
-# 		plt.close()
+		#Format and save
+		plt.tight_layout()
+		pdf.savefig()
+		plt.close()
 
-# 		#######################
+		#######################
 		
-# 		#Create Side by Side Plot for Initial and Asympote values for Decay
-# 		fig = plt.figure()
-# 		ax = fig.add_subplot(111)
-# 		fig.set_size_inches(14.5, 10.5)
-# 		ax.tick_params(labelsize=12)
-# 		colors = cycle(["blue",  "maroon"])
-# 		for i in range ( len(x_axis) ):
-# 			rects = ax.bar(x_axis[i], DecayInitial[i], 0.35, color=next(colors))
-# 			rects1 = ax.bar(x_axis[i]+width, DecayAsympote[i], 0.35, color=next(colors))
+		#Create Side by Side Plot for Initial and Asympote values for Decay
+		fig = plt.figure()
+		ax = fig.add_subplot(111)
+		fig.set_size_inches(14.5, 10.5)
+		ax.tick_params(labelsize=12)
+		colors = cycle(["blue",  "maroon"])
+		for i in range ( len(x_axis) ):
+			rects = ax.bar(x_axis[i], DecayInitial[i], 0.35, color=next(colors))
+			rects1 = ax.bar(x_axis[i]+width, DecayAsympote[i], 0.35, color=next(colors))
 
-# 		#Set the range of x and add tick marks and tick labels
-# 		ax.set_xlim(-width,len(x_axis) + 1 + width)
-# 		ax.set_xticks(x_axis)
-# 		xtickNames = ax.set_xticklabels(fileNamesOnly)
-# 		plt.setp(xtickNames, rotation=75, fontsize=14)
-# 		ax.set_ylabel('Conductance Value',color='black',fontsize=14)
-# 		ax.set_xlabel('File',color='black',fontsize=14)
-# 		plt.title('Significant Exponential Decay Values Used to Calculate Tau',fontsize=16)
+		#Set the range of x and add tick marks and tick labels
+		ax.set_xlim(-width,len(x_axis) + 1 + width)
+		ax.set_xticks(x_axis)
+		xtickNames = ax.set_xticklabels(fileNamesOnly)
+		plt.setp(xtickNames, rotation=75, fontsize=14)
+		ax.set_ylabel('Conductance Value',color='black',fontsize=14)
+		ax.set_xlabel('File',color='black',fontsize=14)
+		plt.title('Significant Exponential Decay Values Used to Calculate Tau',fontsize=16)
 
-# 		#Make the legend
-# 		blue_patch = mpatches.Patch(color='blue', label='Initial Value')
-# 		maroon_patch = mpatches.Patch(color='maroon', label='Asymptote Value')
-# 		plt.legend(handles=[blue_patch,maroon_patch])	
+		#Make the legend
+		blue_patch = mpatches.Patch(color='blue', label='Initial Value')
+		maroon_patch = mpatches.Patch(color='maroon', label='Asymptote Value')
+		plt.legend(handles=[blue_patch,maroon_patch])	
 
-# 		#Format and Save
-# 		plt.tight_layout()
-# 		pdf.savefig()
-# 		plt.close()
+		#Format and Save
+		plt.tight_layout()
+		pdf.savefig()
+		plt.close()
 
-# 		#######################
+		#######################
 
-# 		#Create Side by Side Plot for Min and Max values for Each File
-# 		fig = plt.figure()
-# 		ax = fig.add_subplot(111)
-# 		fig.set_size_inches(14.5, 10.5)
-# 		ax.tick_params(labelsize=12)
-# 		colors = cycle(["blue",  "maroon"])
-# 		for i in range ( len(x_axis) ):
-# 			rects = ax.bar(x_axis[i], min(map(float,conductance[i])), 0.35, color=next(colors))
-# 			rects1 = ax.bar(x_axis[i]+width, max(map(float,conductance[i])), 0.35, color=next(colors))
+		#Create Side by Side Plot for Min and Max values for Each File
+		fig = plt.figure()
+		ax = fig.add_subplot(111)
+		fig.set_size_inches(14.5, 10.5)
+		ax.tick_params(labelsize=12)
+		colors = cycle(["blue",  "maroon"])
+		for i in range ( len(x_axis) ):
+			rects = ax.bar(x_axis[i], min(map(float,conductance[i])), 0.35, color=next(colors))
+			rects1 = ax.bar(x_axis[i]+width, max(map(float,conductance[i])), 0.35, color=next(colors))
 
-# 		#Set the range of x and add tick marks and tick labels
-# 		ax.set_xlim(-width,len(x_axis) + 1 + width)
-# 		ax.set_xticks(x_axis)
-# 		xtickNames = ax.set_xticklabels(fileNamesOnly)
-# 		plt.setp(xtickNames, rotation=75, fontsize=14)
-# 		ax.set_ylabel('Conductance',color='black',fontsize=14)
-# 		ax.set_xlabel('File',color='black',fontsize=14)
-# 		plt.title('Min and Max Conductance',fontsize=16)
+		#Set the range of x and add tick marks and tick labels
+		ax.set_xlim(-width,len(x_axis) + 1 + width)
+		ax.set_xticks(x_axis)
+		xtickNames = ax.set_xticklabels(fileNamesOnly)
+		plt.setp(xtickNames, rotation=75, fontsize=14)
+		ax.set_ylabel('Conductance',color='black',fontsize=14)
+		ax.set_xlabel('File',color='black',fontsize=14)
+		plt.title('Min and Max Conductance',fontsize=16)
 
-# 		#Make the legend
-# 		blue_patch = mpatches.Patch(color='blue', label='Min Conductance')
-# 		maroon_patch = mpatches.Patch(color='maroon', label='Max Conductance')
-# 		plt.legend(handles=[blue_patch,maroon_patch])	
+		#Make the legend
+		blue_patch = mpatches.Patch(color='blue', label='Min Conductance')
+		maroon_patch = mpatches.Patch(color='maroon', label='Max Conductance')
+		plt.legend(handles=[blue_patch,maroon_patch])	
 
-# 		#Format and Save
-# 		plt.tight_layout()
-# 		pdf.savefig()
-# 		plt.close()
+		#Format and Save
+		plt.tight_layout()
+		pdf.savefig()
+		plt.close()
 
 
 #########################

@@ -130,33 +130,6 @@ def addToDataMatrix(MAIN_config):
 		stored_indexes = [0]
 		stored_indexes = splitArray( CO2R_array, CO2_levels_array)
 		stored_indexes.append(len(CO2R_array) -1 )
-		# #If no time was provided
-		# if ( time_periods[0] == -1 ):
-		# 	stored_indexes = splitArray( CO2R_array, CO2_levels_array)
-		# 	stored_indexes.append(len(CO2R_array) -1 )
-		
-		# #Else if time was provided
-		# else:
-			
-		# 	#Indexes array referring to the split of data with time data and temporary variable
-		# 	previous_sec = float(0)
-			
-		# 	#For loop to find indexes for each time setting
-		# 	for i in range(0 , len(time_periods)-1):
-				
-		# 		#The current instrument time setting duration (additive)
-		# 		cur_period = time_periods[i]
-				
-		# 		#Current seconds accounted from previous time slot as well and update previous seconds
-		# 		seconds = float(cur_period*60) + float(previous_sec)
-		# 		previous_sec = seconds
-
-		# 		#Find the index of time-data that is closest to the purposed time value
-		# 		index = findNearestTimeIndex(float(seconds),exp_time)
-		# 		stored_indexes.append(index)
-
-		# 	#Add the last index into array
-		# 	stored_indexes.append(len(exp_time)-1)
 
 		#Append the remaining information
 		array_to_insert_into_matrix.append( map(float,removeIndexes(ExtractOneCondtion(folder_and_file, "Ci", instrument),indexes_to_delete) ))
@@ -166,7 +139,7 @@ def addToDataMatrix(MAIN_config):
 		array_to_insert_into_matrix.append( map(float,removeIndexes(ExtractOneCondtion(folder_and_file, "BLCond", instrument),indexes_to_delete) ))
 		
 		#array that will hold the separate conduction_array 
-		separated_data, separated_time, plotTable,labels = [],[],[],[]
+		separated_data, separated_time, plotTable = [],[],[]
 		for i in range ( 1, len(stored_indexes) ):
 			placeholder, time_hold = [], []
 			for k in range( stored_indexes[i-1], stored_indexes[i]):
@@ -521,25 +494,24 @@ def main():
 
 	plotter.summarizeStatistics(data_Matrix)
 
-	# #plantids array to use for heading
-	# plantids = []
-	# for array_row in data_Matrix:
-	# 	plantids.append(array_row[4])
+	#plantids array to use for heading
+	plantids = []
+	for array_row in data_Matrix:
+		plantids.append(array_row[4])
 
-	# #Create the table for the Bargraphs.pdf and plot the histogrames
-	# histTable = parseStaticsForHistTable(cluster_files, data_Matrix)
+	#Create the table for the Bargraphs.pdf and plot the histogrames
+	histTable = parseStaticsForHistTable(cluster_files, data_Matrix)
 
-	# CriticalIndexes = histTable[:][-1]
-	# print histTable[:][-3]
-	# print CriticalIndexes
-	# plotter.histogram(histTable,plantids,legend_heading)
+	CriticalIndexes = histTable[:][-1]
+	plotter.histogram(histTable,plantids,legend_heading)
 
-	# #Plot the scatter plots with loess over them
-	# plotter.loess(data_Matrix,legend_heading)
+	#Plot the scatter plots with loess over them
+	plotter.loess(data_Matrix,legend_heading)
 
-	# #Write all the data to the text file
-	# WritePlotTableToTxt(data_Matrix)
+	#Write all the data to the text file
+	WritePlotTableToTxt(data_Matrix)
 	
+	# Not complete, was trying to get exponential fitting to work
 	# for array in data_Matrix:
 	# 	phase1, phase2 = exp.determineBehavior(array[12])
 	# 	startpoint_index, midpoint_index, endpoint_index = exp.FindCriticalPoints( phase1 , array[12] )
